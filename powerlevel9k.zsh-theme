@@ -731,6 +731,7 @@ prompt_custom() {
 ################################################################
 # Display the duration the command needed to run.
 prompt_command_execution_time() {
+  set_default POWERLEVEL9K_COMMAND_EXECUTION_TIME_BACKGROUND 'black'
   set_default POWERLEVEL9K_COMMAND_EXECUTION_TIME_THRESHOLD 3
   set_default POWERLEVEL9K_COMMAND_EXECUTION_TIME_PRECISION 2
 
@@ -795,6 +796,12 @@ function getUniqueFolder() {
 set_default POWERLEVEL9K_DIR_PATH_SEPARATOR "/"
 set_default POWERLEVEL9K_HOME_FOLDER_ABBREVIATION "~"
 set_default POWERLEVEL9K_DIR_PATH_HIGHLIGHT_BOLD false
+
+# Default colors
+set_default POWERLEVEL9K_DIR_DEFAULT_BACKGROUND 'dodgerblue2'
+set_default POWERLEVEL9K_DIR_HOME_BACKGROUND 'dodgerblue2'
+set_default POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND 'dodgerblue2'
+
 prompt_dir() {
   # using $PWD instead of "$(print -P '%~')" to allow use of POWERLEVEL9K_DIR_PATH_ABSOLUTE
   local current_path=$PWD # WAS: local current_path="$(print -P '%~')"
@@ -1415,7 +1422,7 @@ prompt_status() {
 
   if (( ec_sum > 0 )); then
     if [[ "$POWERLEVEL9K_STATUS_CROSS" == false && "$POWERLEVEL9K_STATUS_VERBOSE" == true ]]; then
-      "$1_prompt_segment" "$0_ERROR" "$2" "red" "yellow1" "$ec_text" 'CARRIAGE_RETURN_ICON'
+      "$1_prompt_segment" "$0_ERROR" "$2" "red" "black" "$ec_text"
     else
       "$1_prompt_segment" "$0_ERROR" "$2" "$DEFAULT_COLOR" "red" "" 'FAIL_ICON'
     fi
@@ -1519,6 +1526,11 @@ prompt_todo() {
 ################################################################
 # VCS segment: shows the state of your repository, if you are in a folder under
 # version control
+
+# Default colors
+set_default POWERLEVEL9K_VCS_CLEAN_BACKGROUND 'springgreen2'
+set_default POWERLEVEL9K_VCS_UNTRACKED_BACKGROUND 'orangered1'
+
 set_default POWERLEVEL9K_VCS_ACTIONFORMAT_FOREGROUND "red"
 # Default: Just display the first 8 characters of our changeset-ID.
 set_default POWERLEVEL9K_VCS_INTERNAL_HASH_LENGTH "8"
@@ -1613,14 +1625,18 @@ prompt_vcs() {
 # Vi Mode: show editing mode (NORMAL|INSERT)
 set_default POWERLEVEL9K_VI_INSERT_MODE_STRING "INSERT"
 set_default POWERLEVEL9K_VI_COMMAND_MODE_STRING "NORMAL"
+set_default POWERLEVEL9K_VI_VISUAL_MODE_STRING "VISUAL"
 prompt_vi_mode() {
   case ${KEYMAP} in
+    vivis|vivli)
+      "$1_prompt_segment" "$0_VISUAL" "$2" "$DEFAULT_COLOR" "purple" "%B$POWERLEVEL9K_VI_VISUAL_MODE_STRING%b"
+    ;;
     vicmd)
-      "$1_prompt_segment" "$0_NORMAL" "$2" "$DEFAULT_COLOR" "white" "$POWERLEVEL9K_VI_COMMAND_MODE_STRING"
+      "$1_prompt_segment" "$0_NORMAL" "$2" "$DEFAULT_COLOR" "white" "%B$POWERLEVEL9K_VI_COMMAND_MODE_STRING%b"
     ;;
     main|viins|*)
       if [[ -z $POWERLEVEL9K_VI_INSERT_MODE_STRING ]]; then return; fi
-      "$1_prompt_segment" "$0_INSERT" "$2" "$DEFAULT_COLOR" "blue" "$POWERLEVEL9K_VI_INSERT_MODE_STRING"
+      "$1_prompt_segment" "$0_INSERT" "$2" "$DEFAULT_COLOR" "blue" "%B$POWERLEVEL9K_VI_INSERT_MODE_STRING%b"
     ;;
   esac
 }
@@ -1855,11 +1871,6 @@ local NEWLINE='
   [[ $ITERM_SHELL_INTEGRATION_INSTALLED == "Yes" ]] && PROMPT="%{$(iterm2_prompt_mark)%}$PROMPT"
 }
 
-zle-keymap-select () {
-	zle reset-prompt
-	zle -R
-}
-
 set_default POWERLEVEL9K_IGNORE_TERM_COLORS false
 set_default POWERLEVEL9K_IGNORE_TERM_LANG false
 
@@ -1896,8 +1907,8 @@ prompt_powerlevel9k_setup() {
       fi
   fi
 
-  defined POWERLEVEL9K_LEFT_PROMPT_ELEMENTS || POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
-  defined POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS || POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs history time)
+  defined POWERLEVEL9K_LEFT_PROMPT_ELEMENTS || POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(command_execution_time background_jobs dir vcs)
+  defined POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS || POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status vi_mode)
 
   # Display a warning if deprecated segments are in use.
   typeset -AH deprecated_segments
@@ -1937,4 +1948,5 @@ prompt_powerlevel9k_teardown() {
   RPROMPT=
 }
 
+set_default POWERLEVEL9K_MODE 'awesome-fontconfig'
 prompt_powerlevel9k_setup "$@"
