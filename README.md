@@ -34,6 +34,11 @@ Powerlevel9k can be used to create both very useful and beautiful terminal envir
 
 ![](https://camo.githubusercontent.com/b5d7eb49a30bfe6bdb5706fa3c9be95fe8e5956e/687474703a2f2f67696679752e636f6d2f696d616765732f70396b6e65772e676966)
 
+### About this fork
+This fork adds a support for the [visual mode](https://github.com/b4b4r07/zsh-vimode-visual) indicator
+and [vi-mode](https://github.com/nyquase/vi-mode).
+I also added in addition by default widgets, colors and config
+
 ### Table of Contents
 
 1. [Installation](#installation)
