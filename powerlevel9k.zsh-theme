@@ -1948,5 +1948,4 @@ prompt_powerlevel9k_teardown() {
   RPROMPT=
 }
 
-set_default POWERLEVEL9K_MODE 'awesome-fontconfig'
 prompt_powerlevel9k_setup "$@"
